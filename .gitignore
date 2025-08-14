@@ -19,12 +19,14 @@ lib64/
 parts/
 sdist/
 var/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 wheels/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.DS_Store
 MANIFEST
 
 # PyInstaller
