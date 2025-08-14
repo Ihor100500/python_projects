@@ -1,2 +1,4 @@
 pip install pytest-pythonpath
 pip install black isort mypy pytest
+pip install requests
+pip install urllib3
