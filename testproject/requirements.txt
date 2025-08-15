@@ -2,3 +2,5 @@ pip install pytest-pythonpath
 pip install black isort mypy pytest
 pip install requests
 pip install urllib3
+pip install pydantic
+pip install allure-pytest
