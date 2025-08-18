@@ -1,10 +1,12 @@
 import pytest
 import requests
-
+import logging
 
 from src.models.weather import WeatherResponse
 from typing import Any
 from conftest import Client
+
+log = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -39,10 +41,12 @@ def weather_http(http: Client) -> Client:
     return WeatherClient(http)
 
 
+@pytest.mark.api
 def test_weather_gov_glossary_endpoint(weather_http: Client) -> None:
     """
     Test the /glossary endpoint of the weather.gov API.
     """
+    log.info("Testing /glossary endpoint of the weather.gov API")
     response = weather_http.get("/glossary")
     assert (
         response.status_code == 200

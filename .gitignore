@@ -53,6 +53,9 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+reports/
+traces/
+videos/
 
 # Translations
 *.mo
