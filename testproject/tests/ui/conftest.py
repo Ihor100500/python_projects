@@ -41,6 +41,11 @@ def base_url(pytestconfig: "Config") -> str:
 
 
 @pytest.fixture(scope="session")
+def slow_mo(pytestconfig: "Config") -> int:
+    return int(pytestconfig.getoption("--slowmo") or 0)
+
+
+@pytest.fixture(scope="session")
 def playwright_instance() -> (
     generator["Playwright", None, None]
 ):  # return PlaywrightContextManager
@@ -53,9 +58,10 @@ def browser(
     playwright_instance: "Playwright",
     browser_name: str,
     headless: bool,
+    slow_mo: int,
 ) -> generator["Browser", None, None]:
     browser_type = getattr(playwright_instance, browser_name)
-    browser = browser_type.launch(headless=headless)
+    browser = browser_type.launch(headless=headless, slow_mo=slow_mo)
     yield browser
     browser.close()
 
