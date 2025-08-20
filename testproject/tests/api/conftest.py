@@ -8,55 +8,55 @@ from pathlib import Path
 from requests import Session
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-
+from services.client import Client
 
 log = logging.getLogger(__name__)
 
 
-class Client:
-    def __init__(self, session: Session, base_url: str):
-        self.session = session
-        self.base_url = base_url
+# class Client:
+#     def __init__(self, session: Session, base_url: str):
+#         self.session = session
+#         self.base_url = base_url
 
-    def get(self, endpoint: str, **kwargs: Any) -> requests.Response:
-        log.info(f"GET request to {self.base_url}{endpoint} with params: {kwargs}")
-        response: requests.Response = self.session.get(
-            f"{self.base_url}{endpoint}", **kwargs
-        )
-        log.info(f"Response status code: {response.status_code}")
-        log.info(f"Response headers: {response.headers}")
-        log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
-        return response
+#     def get(self, endpoint: str, **kwargs: Any) -> requests.Response:
+#         log.info(f"GET request to {self.base_url}{endpoint} with params: {kwargs}")
+#         response: requests.Response = self.session.get(
+#             f"{self.base_url}{endpoint}", **kwargs
+#         )
+#         log.info(f"Response status code: {response.status_code}")
+#         log.info(f"Response headers: {response.headers}")
+#         log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
+#         return response
 
-    def post(self, endpoint: str, **kwargs: Any) -> requests.Response:
-        log.info(f"POST request to {self.base_url}{endpoint} with data: {kwargs}")
-        response: requests.Response = self.session.post(
-            f"{self.base_url}{endpoint}", **kwargs
-        )
-        log.info(f"Response status code: {response.status_code}")
-        log.info(f"Response headers: {response.headers}")
-        log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
-        return response
+#     def post(self, endpoint: str, **kwargs: Any) -> requests.Response:
+#         log.info(f"POST request to {self.base_url}{endpoint} with data: {kwargs}")
+#         response: requests.Response = self.session.post(
+#             f"{self.base_url}{endpoint}", **kwargs
+#         )
+#         log.info(f"Response status code: {response.status_code}")
+#         log.info(f"Response headers: {response.headers}")
+#         log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
+#         return response
 
-    def put(self, endpoint: str, **kwargs: Any) -> requests.Response:
-        log.info(f"PUT request to {self.base_url}{endpoint} with data: {kwargs}")
-        response: requests.Response = self.session.put(
-            f"{self.base_url}{endpoint}", **kwargs
-        )
-        log.info(f"Response status code: {response.status_code}")
-        log.info(f"Response headers: {response.headers}")
-        log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
-        return response
+#     def put(self, endpoint: str, **kwargs: Any) -> requests.Response:
+#         log.info(f"PUT request to {self.base_url}{endpoint} with data: {kwargs}")
+#         response: requests.Response = self.session.put(
+#             f"{self.base_url}{endpoint}", **kwargs
+#         )
+#         log.info(f"Response status code: {response.status_code}")
+#         log.info(f"Response headers: {response.headers}")
+#         log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
+#         return response
 
-    def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
-        log.info(f"DELETE request to {self.base_url}{endpoint} with params: {kwargs}")
-        response: requests.Response = self.session.delete(
-            f"{self.base_url}{endpoint}", **kwargs
-        )
-        log.info(f"Response status code: {response.status_code}")
-        log.info(f"Response headers: {response.headers}")
-        log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
-        return response
+#     def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
+#         log.info(f"DELETE request to {self.base_url}{endpoint} with params: {kwargs}")
+#         response: requests.Response = self.session.delete(
+#             f"{self.base_url}{endpoint}", **kwargs
+#         )
+#         log.info(f"Response status code: {response.status_code}")
+#         log.info(f"Response headers: {response.headers}")
+#         log.info(f"Response content: {response.text[:300]}...")  # Log first 300 chars
+#         return response
 
 
 def _build_session(timeout: float = 0.0, retries: int = 3) -> Session:
@@ -78,6 +78,14 @@ def _build_session(timeout: float = 0.0, retries: int = 3) -> Session:
 def base_url() -> str:
     return os.getenv("BASE_URL", "http://localhost:8000")
 
+@pytest.fixture(scope="session")
+def session() -> generator[Session, None, None]:
+    """
+    Create a session for making HTTP requests.
+    """
+    s =_build_session()
+    yield s
+    s.close()
 
 # @pytest.fixture(scope="session")
 # def auth_token(base_url: str) -> Any:
@@ -93,15 +101,12 @@ def base_url() -> str:
 #     except requests.RequestException as e:
 #         return "No authentication token provided"
 
-
-@pytest.fixture(scope="session")
-def http(base_url: str) -> generator[Client, None, None]:
-    session = _build_session()
-    # if not auth_token:
-    #     raise RuntimeError("Authentication token is required for HTTP client.")
-    # session.headers.update({"Authorization": f"Bearer {auth_token}"})
-    yield Client(session, base_url)
-    session.close()
+@pytest.fixture
+def nice_client(session: Session, base_url: str) -> Client:
+    """
+    Create a client for making HTTP requests.
+    """
+    return Client(session, base_url)
 
 
 @pytest.fixture

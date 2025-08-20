@@ -42,7 +42,7 @@ def base_url(pytestconfig: "Config") -> str:
 
 @pytest.fixture(scope="session")
 def slow_mo(pytestconfig: "Config") -> int:
-    return int(pytestconfig.getoption("--slowmo") or 0)
+    return int(pytestconfig.getoption("--slowmo") or 0)  # type: ignore
 
 
 @pytest.fixture(scope="session")

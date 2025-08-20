@@ -1,27 +1,22 @@
 {
-    "python.defaultInterpreterPath": ".venv/bin/python",
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "editor.formatOnSave": true,
-    "isort.args": [
-        "--profile",
-        "black"
-    ],
-    "python.analysis.typeCheckingMode": "basic",
-    "mypy-type-checker.importStrategy": "fromEnvironment",
-    "python.testing.pytestArgs": [
-        "testproject/tests"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "chat.mcp.enabled": true,
-    "mcpServers": {
-        "playwright": {
-            "command": "npx",
-            "args": [
-                "@playwright/mcp@latest"
-            ]
-        }
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "editor.formatOnSave": true,
+  "isort.args": ["--profile", "black"],
+  "python.analysis.typeCheckingMode": "basic",
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "python.testing.pytestArgs": ["testproject"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "chat.mcp.enabled": true,
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
     }
+  },
+  "python-envs.pythonProjects": [],
+  "python-envs.defaultEnvManager": "ms-python.python:system"
 }

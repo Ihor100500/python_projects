@@ -4,18 +4,19 @@ import logging
 
 from src.models.weather import WeatherResponse
 from typing import Any
-from conftest import Client
+from services.client import Client
 
 log = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def weather_http(http: Client) -> Client:
+def weather_http(nice_client: Client) -> Client:
     """
     Fixture to provide a specialized HTTP client for weather-related endpoints.
     """
 
     class WeatherClient(Client):
+
         def __init__(self, client: Client):
             self.client = client
             self.client.base_url = "https://api.weather.gov"
@@ -27,18 +28,30 @@ def weather_http(http: Client) -> Client:
             return kwargs
 
         def get(self, endpoint: str, **kwargs: Any) -> requests.Response:
-            return self.client.get(endpoint, **self._inject(kwargs))
+            response = self.client.get(endpoint, **self._inject(kwargs))
+            if not isinstance(response, requests.Response):
+                raise TypeError(f"Expected requests.Response, got {type(response).__name__}")
+            return response
 
         def post(self, endpoint: str, **kwargs: Any) -> requests.Response:
-            return self.client.post(endpoint, **self._inject(kwargs))
+            response = self.client.post(endpoint, **self._inject(kwargs))
+            if not isinstance(response, requests.Response):
+                raise TypeError(f"Expected requests.Response, got {type(response).__name__}")
+            return response
 
         def put(self, endpoint: str, **kwargs: Any) -> requests.Response:
-            return self.client.put(endpoint, **self._inject(kwargs))
+            response = self.client.put(endpoint, **self._inject(kwargs))
+            if not isinstance(response, requests.Response):
+                raise TypeError(f"Expected requests.Response, got {type(response).__name__}")
+            return response
 
         def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
-            return self.client.delete(endpoint, **self._inject(kwargs))
+            response = self.client.put(endpoint, **self._inject(kwargs))
+            if not isinstance(response, requests.Response):
+                raise TypeError(f"Expected requests.Response, got {type(response).__name__}")
+            return response
 
-    return WeatherClient(http)
+    return WeatherClient(nice_client)
 
 
 @pytest.mark.api
